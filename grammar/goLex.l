@@ -1,8 +1,14 @@
 %{
 #include<stdio.h>
 %}
-
+%x C_COMMENT
 %%
+ /* comments */ 
+"/*"            { BEGIN(C_COMMENT); }
+<C_COMMENT>"*/" { BEGIN(INITIAL); }
+<C_COMMENT>.    { }
+'/''/'^[\n] \n printf("Single line comment\n");
+ /* keywords */
 break printf("break\n");
 case printf("case\n");
 chan printf("chan\n");

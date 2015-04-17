@@ -1,7 +1,10 @@
 %{
 #include<stdio.h>
+#include<iostream>
 int lineno = 1;
+std::string str;
 %}
+%x STR_LITERAL
 %x C_COMMENT
 %%
  /* comments */ 
@@ -95,6 +98,9 @@ append printf("append");
  /* Literals */
 [0-9]+ printf("%s",yytext);
 [0-9]"."[0-9] printf("%s",yytext);
+\" {BEGIN(STR_LITERAL); str ="\"";}
+<STR_LITERAL>\" {str += "\""; printf("%s",str.c_str()); BEGIN(INITIAL);}
+<STR_LITERAL>. {str+=yytext;}
 [a-zA-z_][a-zA-z0-9_]* printf("ID %s",yytext);
 [ \t]+ printf("%s",yytext); 
 "\n" {printf("\n"); lineno++;}

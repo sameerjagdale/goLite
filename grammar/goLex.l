@@ -4,10 +4,12 @@
 %x C_COMMENT
 %%
  /* comments */ 
+ /* multi line comments*/
 "/*"            { BEGIN(C_COMMENT); }
 <C_COMMENT>"*/" { BEGIN(INITIAL); }
-<C_COMMENT>.    { }
-'/''/'^[\n] \n printf("Single line comment\n");
+ /* single line comment*/
+<C_COMMENT>.    { printf("comment\n"); }
+"//"[^\r\n]*[\r\n<<EOF>>] printf("comment %s\n",yytext +sizeof(char)*2);
  /* keywords */
 break printf("break\n");
 case printf("case\n");

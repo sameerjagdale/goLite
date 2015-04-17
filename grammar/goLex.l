@@ -94,7 +94,7 @@ append printf("append");
 ":" printf(":");
  /* Literals */
 [0-9]+ printf("%s",yytext);
-[0-9]"."[0-9]
+[0-9]"."[0-9] printf("%s",yytext);
 [a-zA-z_][a-zA-z0-9_]* printf("ID %s",yytext);
 [ \t]+ printf("%s",yytext); 
 "\n" {printf("\n"); lineno++;}

@@ -102,6 +102,7 @@ append printf("append");
 [0-9]"."[0-9] printf("%s",yytext);
 \" {BEGIN(STR_LITERAL); str ="";}
 <STR_LITERAL>\" { printf("\"%s\"",str.c_str()); BEGIN(INITIAL);}
+<STR_LITERAL>"\\""n" {str+="\n";}
 <STR_LITERAL>\n {str += "\\"; str+= "n";}
 <STR_LITERAL>\a {str+= "\\"; str+="a";}
 <STR_LITERAL>\t {str+= "\\"; str+="t";}
@@ -126,7 +127,7 @@ int yywrap()
 }
 
 int main(int argc, char*argv[]) {
-	/* yyin = fopen(argv[1], "r"); */	
+	yyin = fopen(argv[1], "r");	
 	yylex();
 	return 0;
 }

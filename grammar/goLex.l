@@ -5,6 +5,7 @@ int lineno = 1;
 std::string str;
 %}
 %x STR_LITERAL
+%x RAW_STR_LITERAL
 %x C_COMMENT
 %%
  /* comments */ 
@@ -102,9 +103,17 @@ append printf("append");
 \" {BEGIN(STR_LITERAL); str ="";}
 <STR_LITERAL>\" { printf("\"%s\"",str.c_str()); BEGIN(INITIAL);}
 <STR_LITERAL>\n {str += "\\"; str+= "n";}
+<STR_LITERAL>\a {str+= "\\"; str+="a";}
+<STR_LITERAL>\t {str+= "\\"; str+="t";}
+<STR_LITERAL>\f {str+= "\\"; str+="f";}
+<STR_LITERAL>\r {str+= "\\"; str+="r";}
+<STR_LITERAL>\b {str+= "\\"; str+="b";}
+<STR_LITERAL>\v {str+= "\\"; str+="v";}
+<STR_LITERAL>"\\" {str+= "\\"; str+="\\";}
+<STR_LITERAL>"\'" {str+= "\\"; str+="\'";}
 <STR_LITERAL><<EOF>> {printf("End of File\n"); exit(0);}
 <STR_LITERAL>. {str+=yytext;}
-
+\'.\'  printf("%s", yytext); 
 [a-zA-Z][a-zA-Z0-9]* printf("%s",yytext);
 [ \t]+ printf("%s",yytext); 
 "\n" {printf("\n"); lineno++;}
@@ -117,7 +126,7 @@ int yywrap()
 }
 
 int main(int argc, char*argv[]) {
-	yyin = fopen(argv[1], "r");	
+	/* yyin = fopen(argv[1], "r"); */	
 	yylex();
 	return 0;
 }

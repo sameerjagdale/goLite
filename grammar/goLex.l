@@ -24,7 +24,8 @@ continue printf("continue");
 default printf("default");
 defer printf("defer");
 else printf("else");
-fallthrough printf("for");
+fallthrough printf("fallthrough");
+for printf("for");
 func printf("func");
 go printf("go");
 goto printf("goto");
@@ -98,10 +99,13 @@ append printf("append");
  /* Literals */
 [0-9]+ printf("%s",yytext);
 [0-9]"."[0-9] printf("%s",yytext);
-\" {BEGIN(STR_LITERAL); str ="\"";}
-<STR_LITERAL>\" {str += "\""; printf("%s",str.c_str()); BEGIN(INITIAL);}
+\" {BEGIN(STR_LITERAL); str ="";}
+<STR_LITERAL>\" { printf("\"%s\"",str.c_str()); BEGIN(INITIAL);}
+<STR_LITERAL>\n {str += "\\"; str+= "n";}
+<STR_LITERAL><<EOF>> {printf("End of File\n"); exit(0);}
 <STR_LITERAL>. {str+=yytext;}
-[a-zA-z_][a-zA-z0-9_]* printf("ID %s",yytext);
+
+[a-zA-Z][a-zA-Z0-9]* printf("%s",yytext);
 [ \t]+ printf("%s",yytext); 
 "\n" {printf("\n"); lineno++;}
 . ;

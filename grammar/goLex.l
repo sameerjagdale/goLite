@@ -102,8 +102,8 @@ append printf("append");
 [0-9]"."[0-9] printf("%s",yytext);
 \" {BEGIN(STR_LITERAL); str ="";}
 <STR_LITERAL>\" { printf("\"%s\"",str.c_str()); BEGIN(INITIAL);}
-<STR_LITERAL>"\\""n" {str+="\n";}
-<STR_LITERAL>\n {str += "\\"; str+= "n";}
+<STR_LITERAL>"\\""n" {str+="\\n";}
+<STR_LITERAL>\n {printf("ERROR strings have to be on a single line\n");exit(0); }
 <STR_LITERAL>\a {str+= "\\"; str+="a";}
 <STR_LITERAL>\t {str+= "\\"; str+="t";}
 <STR_LITERAL>\f {str+= "\\"; str+="f";}

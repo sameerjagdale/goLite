@@ -39,9 +39,24 @@ void copyToStr() {
 		i++;
 	}
 }
+/* Function checks whether to insert a semicolon depending on last token. */
+bool insertSemicolon() {
+	return lastToken == tIDENTIFIER ||
+	lastToken == tCONST || 
+	lastToken == tINTCONST || 
+	lastToken == tFLOATCONST ||
+	lastToken == tRUNECONST ||
+	lastToken == tFALLTHROUGH ||
+	lastToken == tINC ||
+	lastToken == tDEC ||
+	lastToken == ')' ||
+	lastToken == ']' ||
+	lastToken == '}' ||
+	lastToken == tRETURN|| 
+	lastToken == tBREAK|| 
+	lastToken == tCONTINUE;
+}
 %}
-%x STR_LITERAL
-%x RAW_STR_LITERAL
 %x C_COMMENT
 DIGIT [0-9]
 OCTAL [0-7]
@@ -150,7 +165,8 @@ DIGIT"."DIGIT return saveAndReturn(tFLOATCONST);
 \"(\\.|[^\\"])*\" {return saveAndReturn(tSTRINGCONST);}
 \'.\'  return saveAndReturn(tRUNECONST); 
 LETTER(LETTER|DIGIT)* return saveAndReturn(tIDENTIFIER);
-[ \t\n]+ ; 
+[ \t]+ ; 
+\n return saveAndReturn(';');
 . ;
 %%
 

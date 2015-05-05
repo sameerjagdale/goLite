@@ -1,12 +1,26 @@
 %{
 #include<stdio.h>
 #include<iostream>
-int lineno = 1;
+#include<goParser.hpp>
 std::string str;
+#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno;
+int lastToken=0;
+int saveAndReturn(int token) {
+	lastToken = token;
+	return token;
+}
+	
 %}
 %x STR_LITERAL
 %x RAW_STR_LITERAL
 %x C_COMMENT
+DIGIT [0-9]
+OCTAL [0-7]
+HEX [0-9A-Fa-f]
+LETTER [A-Za-z_]
+%option noinput
+%option nounput
+%option yylineno
 %%
  /* comments */ 
  /* multi line comments*/
@@ -17,119 +31,97 @@ std::string str;
  /* single line comment*/
 "//"[^\r\n]*[\r\n<<EOF>>] printf("comment %s\n",yytext +sizeof(char)*2);
  /* keywords */
-break printf("break");
-case printf("case");
-chan printf("chan");
-const printf("const");
-continue printf("continue");
-default printf("default");
-defer printf("defer");
-else printf("else");
-fallthrough printf("fallthrough");
-for printf("for");
-func printf("func");
-go printf("go");
-goto printf("goto");
-if printf("if");
-import printf("import");
-interface printf("interface");
-map printf("map");
-package printf("package");
-range printf("range");
-return printf("return");
-select printf("select");
-struct printf("struct");
-switch printf("switch");
-type printf("type");
-var printf("var");
-int printf("int");
-float64 printf("float64");
-bool printf("bool");
-rune printf("rune ");
-string printf("string");
-print printf("print");
-println printf("println");
-append printf("append");
+break return saveAndReturn(tBREAK);
+case return saveAndReturn(tCASE);
+chan return saveAndReturn(tCHAN);
+const return saveAndReturn(tCONST);
+continue return saveAndReturn(tCONTINUE);
+default return saveAndReturn(tDEFAULT);
+defer return saveAndReturn(tDEFER);
+else return saveAndReturn(tELSE);
+fallthrough return saveAndReturn(tFALLTHROUGH);
+for return saveAndReturn(tFOR);
+func return saveAndReturn(tFUNC);
+go return saveAndReturn(tGO);
+goto return saveAndReturn(tGOTO);
+if return saveAndReturn(tIF);
+import return saveAndReturn(tIMPORT);
+interface return saveAndReturn(tINTERFACE);
+map return saveAndReturn(tMAP);
+package return saveAndReturn(tPACKAGE);
+range return saveAndReturn(tRANGE);
+return return saveAndReturn(tRETURN);
+select return saveAndReturn(tSELECT);
+struct return saveAndReturn(tSTRUCT);
+switch return saveAndReturn(tSWITCH);
+type return saveAndReturn(tTYPE);
+var return saveAndReturn(tVAR);
+int return saveAndReturn(tINT);
+float64 return saveAndReturn(tFLOAT);
+bool return saveAndReturn(tBOOL);
+rune return saveAndReturn(tRUNE);
+string return saveAndReturn(tSTRING);
+print return saveAndReturn(tPRINT);
+println return saveAndReturn(tPRINTLN);
+append return saveAndReturn(tAPPEND);
  /* operators */
-"+" printf("+");
-"-" printf("-");
-"*" printf("*");
-"/" printf("/");
-"%" printf("%");
-"|" printf("|");
-"^" printf("^");
-"<<" printf("<<");
-">>" printf(">>");
-"&^" printf("&^");
-"+=" printf("+=");
-"-=" printf("-=");
-"*=" printf("*=");
-"/=" printf("/=");
-"%=" printf("%=");
-"&=" printf("&=");
-"|=" printf("|=");
-"^=" printf("^=");
-"<<=" printf("<<=");
-">>=" printf(">>=");
-"&^=" printf("&^=");
-"&&" printf("&&");
-"||" printf("||");
-"<-" printf("<-");
-"++" printf("++");
-"--" printf("--");
-"==" printf("==");
-"<" printf("<");
-">" printf(">");
-"=" printf("=");
-"!" printf("!");
-"!=" printf("!=");
-"<=" printf("<=");
-">=" printf(">=");
-":=" printf(":=");
-"..." printf("...");
-"(" printf("(");
-")" printf(")");
-"[" printf("[");
-"]" printf("]");
-"{" printf("{");
-"}" printf("}");
-"," printf(",");
-"." printf(".");
-";" printf(";");
-":" printf(":");
+"+" return saveAndReturn('+');
+"-" return saveAndReturn('-');
+"*" return saveAndReturn('*');
+"/" return saveAndReturn('/');
+"%" return saveAndReturn('%');
+"|" return saveAndReturn('|');
+"^" return saveAndReturn('^');
+"<<" return saveAndReturn(tSHL);
+">>" return saveAndReturn(tSHR);
+"&^" return saveAndReturn(tANDNOT);
+"+=" return saveAndReturn(tADDASSIGN);
+"-=" return saveAndReturn(tSUBASSIGN);
+"*=" return saveAndReturn(tMULASSIGN);
+"/=" return saveAndReturn(tDIVASSIGN);
+"%=" return saveAndReturn(tREMASSIGN);
+"&=" return saveAndReturn(tANDASSIGN);
+"|=" return saveAndReturn(tORASSIGN);
+"^=" return saveAndReturn(tXORASSIGN);
+"<<=" return saveAndReturn(tSHLASSIGN);
+">>=" return saveAndReturn(tSHRASSIGN);
+"&^=" return saveAndReturn(tANDNOTASSIGN);
+"&&" return saveAndReturn(tLAND);
+"||" return saveAndReturn(tLOR);
+"<-" return saveAndReturn(tARROW);
+"++" return saveAndReturn(tINC);
+"--" return saveAndReturn(tDEC);
+"==" return saveAndReturn(tEQUALS);
+"<" return saveAndReturn('<');
+">" return saveAndReturn('>');
+"=" return saveAndReturn('=');
+"!" return saveAndReturn(tBANG);
+"!=" return saveAndReturn(tNEQ);
+"<=" return saveAndReturn(tLEQ);
+">=" return saveAndReturn(tGEQ);
+":=" return saveAndReturn(tDEFINE);
+"..." return saveAndReturn(tELLIPSIS);
+"(" return saveAndReturn('(');
+")" return saveAndReturn(')');
+"[" return saveAndReturn('[');
+"]" return saveAndReturn('[');
+"{" return saveAndReturn('{');
+"}" return saveAndReturn('}');
+"," return saveAndReturn(',');
+"." return saveAndReturn('.');
+";" return saveAndReturn(';');
+":" return saveAndReturn(':');
  /* Literals */
-[0-9]+ printf("%s",yytext);
-[0-9]"."[0-9] printf("%s",yytext);
+((0{OCTAL})|(0(x|X){HEX})|(0|[1-9]+)) return saveAndReturn(tINTCONST);
+DIGIT"."DIGIT return saveAndReturn(tFLOATCONST);
+
  /*Raw String*/
-"`" {BEGIN(RAW_STR_LITERAL);}
-<RAW_STR_LITERAL>"`" {BEGIN(INITIAL);printf("\"%s\"",str.c_str());}
-<RAW_STR_LITERAL>\a {str+= "\\a";}
-<RAW_STR_LITERAL>\t {str+= "\\t";}
-<RAW_STR_LITERAL>\\t {str+= "\\\\t";}
-<RAW_STR_LITERAL>\\f {str+= "\\\\"; str+="f";}
-<RAW_STR_LITERAL>\\r {str+= "\\\\"; str+="r";}
-<RAW_STR_LITERAL>\\b {str+= "\\\\"; str+="b";}
-<RAW_STR_LITERAL>\\v {str+= "\\\\"; str+="v";}
-<RAW_STR_LITERAL>"\\""n" {str+="\\\\n";}
-<RAW_STR_LITERAL>\n {str += "\\n";}
-\" {BEGIN(STR_LITERAL); str ="";}
-<STR_LITERAL>\" { printf("\"%s\"",str.c_str()); BEGIN(INITIAL);}
-<STR_LITERAL>"\\n" {str+="\\n";}
-<STR_LITERAL>\n {printf("ERROR strings have to be on a single line\n");exit(0); }
-<STR_LITERAL>(\\a|\a) {str+= "\\a";}
-<STR_LITERAL>(\\t|"\t") {str+= "\\t";}
-<STR_LITERAL>(\\f|\f) {str+= "\\f";}
-<STR_LITERAL>(\\r|\r) {str+= "\\r";}
-<STR_LITERAL>(\\b|\b) {str+= "\\b";}
-<STR_LITERAL>(\\v|\v) {str+= "\\v";}
-<STR_LITERAL>"\\" {str+= "\\";}
-<STR_LITERAL>"\'" {str+= "\\"; str+="\'";}
-<STR_LITERAL,RAW_STR_LITERAL><<EOF>> {printf("End of File\n"); exit(0);}
-<STR_LITERAL,RAW_STR_LITERAL>. {str+=yytext;}
-\'.\'  printf("%s", yytext); 
-[a-zA-Z][a-zA-Z0-9]* printf("%s",yytext);
-[ \t]+ printf("%s",yytext); 
-"\n" {printf("\n"); lineno++;}
+`(\\.|[^`])*` {return saveAndReturn(tRAWSTRINGCONST);}
+ /* Interpreted string */
+\"(\\.|[^\\"])*\" {return saveAndReturn(tSTRINGCONST);}
+\'.\'  return saveAndReturn(tRUNECONST); 
+LETTER(LETTER|DIGIT)* return saveAndReturn(tIDENTIFIER);
+[ \t\n]+ ; 
 . ;
 %%
 
@@ -138,8 +130,8 @@ int yywrap()
 	return 1;
 }
 
-int main(int argc, char*argv[]) {
-	yyin = fopen(argv[1], "r");	
-	yylex();
-	return 0;
-}
+/* int main(int argc, char*argv[]) { */
+/* 	yyin = fopen(argv[1], "r"); */	
+/* 	yylex(); */
+/* 	return 0; */
+/* } */

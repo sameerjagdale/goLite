@@ -10,6 +10,35 @@ int saveAndReturn(int token) {
 	return token;
 }
 	
+void copyToStr() {
+	int i = 0;
+	str = "";
+	while(yytext[i] != '\0') {
+		switch(yytext[i]) {
+			case '\n' : 
+				str +="\\n";
+				break;
+			case '\t' :
+				str += "\\t";
+				break;
+			case '\a':
+			case '\v':
+			case '\f':
+			case '\r':
+				str += "\\a";
+				break;
+			case '\\' : 
+				str += "\\\\";
+				str += yytext[++i];
+				break;
+			default: 
+				str += yytext[i];
+				break;
+			
+		}
+		i++;
+	}
+}
 %}
 %x STR_LITERAL
 %x RAW_STR_LITERAL
@@ -116,7 +145,7 @@ append return saveAndReturn(tAPPEND);
 DIGIT"."DIGIT return saveAndReturn(tFLOATCONST);
 
  /*Raw String*/
-`(\\.|[^`])*` {return saveAndReturn(tRAWSTRINGCONST);}
+`(\\.|[^`])*` {copyToStr(); return saveAndReturn(tRAWSTRINGCONST);}
  /* Interpreted string */
 \"(\\.|[^\\"])*\" {return saveAndReturn(tSTRINGCONST);}
 \'.\'  return saveAndReturn(tRUNECONST); 

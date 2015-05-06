@@ -68,7 +68,3 @@ STRUCTTYPE: tSTRUCT '{' FIELDDECLLIST '}'
 FIELDDECLLIST: FIELDDECLLIST FIELDDECL ';' |
 FIELDDECL: IDENTIFIERLIST TYPE
 %%
-int main(int argc, char* argv[]) {
-		yyin = fopen(argv[1], "r");	
-		yyparse();
-}

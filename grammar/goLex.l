@@ -54,7 +54,13 @@ bool insertSemicolon() {
 	lastToken == '}' ||
 	lastToken == tRETURN|| 
 	lastToken == tBREAK|| 
-	lastToken == tCONTINUE;
+	lastToken == tCONTINUE ||
+	lastToken == tINT || 
+	lastToken == tFLOAT ||
+	lastToken == tSTRING || 
+	lastToken == tBOOL ||
+	lastToken == tRUNE;
+	
 }
 %}
 %x C_COMMENT
@@ -73,7 +79,7 @@ LETTER [A-Za-z_]
 <C_COMMENT><<EOF>> {printf("End of File reached\n"); exit(1);}
 <C_COMMENT>.    { }
  /* single line comment*/
-"//"[^\r\n]*[\r\n<<EOF>>] printf("comment %s\n",yytext +sizeof(char)*2);
+"//"[^\r\n]*[\r\n<<EOF>>] 
  /* keywords */
 break return saveAndReturn(tBREAK);
 case return saveAndReturn(tCASE);
@@ -148,7 +154,7 @@ append return saveAndReturn(tAPPEND);
 "(" return saveAndReturn('(');
 ")" return saveAndReturn(')');
 "[" return saveAndReturn('[');
-"]" return saveAndReturn('[');
+"]" return saveAndReturn(']');
 "{" return saveAndReturn('{');
 "}" return saveAndReturn('}');
 "," return saveAndReturn(',');
@@ -164,10 +170,10 @@ DIGIT"."DIGIT return saveAndReturn(tFLOATCONST);
  /* Interpreted string */
 \"(\\.|[^\\"])*\" {return saveAndReturn(tSTRINGCONST);}
 \'.\'  return saveAndReturn(tRUNECONST); 
-LETTER(LETTER|DIGIT)* return saveAndReturn(tIDENTIFIER);
-[ \t]+ ; 
-\n return saveAndReturn(';');
-. ;
+\n  if(insertSemicolon()) {return saveAndReturn(';');}
+[ \t]+ 
+{LETTER}({LETTER}|{DIGIT})* { return saveAndReturn(tIDENTIFIER);}
+. 
 %%
 
 int yywrap()

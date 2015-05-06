@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include<iostream>
+#include<errno.h>
 
 
 extern char *yytext;
@@ -9,7 +10,7 @@ extern int yylineno;
 extern FILE* yyin;
 extern std::string str;
 extern int yylex();
-void yyerror(char const *s) { fprintf(stderr, "Error: (line %d) %s\n", yylineno, s); }
+void yyerror(char const *s) { errno = 1; fprintf(stderr, "Error: (line %d) %s\n", yylineno, s); }
 %}
 %token tBREAK tCASE tCHAN tCONST tCONTINUE tDEFAULT tDEFER tELSE tFALLTHROUGH tFOR tFUNC tGO tGOTO tIF tIMPORT tINTERFACE tMAP tPACKAGE tRANGE tRETURN tSELECT tSTRUCT tSWITCH tTYPE tVAR
 %token tINT tFLOAT tBOOL tRUNE tSTRING tPRINT tPRINTLN tAPPEND

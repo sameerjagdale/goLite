@@ -162,8 +162,8 @@ append return saveAndReturn(tAPPEND);
 ";" return saveAndReturn(';');
 ":" return saveAndReturn(':');
  /* Literals */
-((0{OCTAL})|(0(x|X){HEX})|(0|[1-9]+)) return saveAndReturn(tINTCONST);
-DIGIT"."DIGIT return saveAndReturn(tFLOATCONST);
+((0{OCTAL})|(0(x|X){HEX})|(0|[1-9]{DIGIT}*)) return saveAndReturn(tINTCONST);
+{DIGIT}*\.{DIGIT}* return saveAndReturn(tFLOATCONST);
 
  /*Raw String*/
 `(\\.|[^`])*` {copyToStr(); return saveAndReturn(tRAWSTRINGCONST);}

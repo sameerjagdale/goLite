@@ -1,5 +1,5 @@
-all: gen compile 
-compile : main.o
+all: compile
+compile : gen main.o
 	g++  bin/*.o -o bin/goCompiler -I gen/	 -std=c++11
 main.o : goLexer.o  src/main.cpp
 	g++ -c src/main.cpp -o bin/main.o -I gen/ 

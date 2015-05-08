@@ -173,7 +173,7 @@ append return saveAndReturn(tAPPEND);
 \n  if(insertSemicolon()) {return saveAndReturn(';');}
 [ \t]+ 
 {LETTER}({LETTER}|{DIGIT})* { return saveAndReturn(tIDENTIFIER);}
-. 
+. fprintf(stderr,"Unidentified characted %s",yytext); 
 %%
 
 int yywrap()

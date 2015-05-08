@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include<iostream>
-#include<errno.h>
 
 
 extern char *yytext;

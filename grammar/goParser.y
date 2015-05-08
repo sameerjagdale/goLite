@@ -71,6 +71,7 @@ STMTLIST:/*empty*/ |STMTLIST STMT
 STMT : ';' | EXPRSTMT; 
 EXPRSTMT: EXPR ';'
  /* Expressions */ 
+EXPRLIST : EXPR | EXPRLIST ',' EXPR 
 OPERAND: '(' EXPR ')' |
 		OPERANDNAME|
 		LITERAL;
@@ -81,14 +82,23 @@ EXPR: PRIMARYEXPR |
 	  EXPR '/' EXPR |
 	  EXPR '-' EXPR | 
 	  EXPR '+' EXPR | 
+	  FUNCALLEXPR |
 	  UNOP EXPR %prec tUNOP 
 UNOP : '+' | '-' | tBANG | '^'
+FUNCALLEXPR: tIDENTIFIER '(' EXPRLIST ')'
 PRIMARYEXPR : OPERAND 
 			 |CONVERSION
 			 | PRIMARYEXPR SELECTOR 
 			 |PRIMARYEXPR INDEX
+			 |PRIMARYEXPR SLICE
 SELECTOR : '.' tIDENTIFIER
 CONVERSION : TYPE '(' EXPR ')'
 INDEX : '[' EXPR ']'
+SLICE : '[' EXPR ':' EXPR ']'
+		| '[' ':' EXPR ']'
+		| '[' EXPR ':' ']'
+		| '[' ':' ']'
+		| '[' EXPR ':' EXPR ':' EXPR ']'
+		| '[' ':' EXPR ':' EXPR ']'  
 %%
 

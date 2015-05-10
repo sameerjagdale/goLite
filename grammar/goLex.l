@@ -46,6 +46,8 @@ bool insertSemicolon() {
 	lastToken == tINTCONST || 
 	lastToken == tFLOATCONST ||
 	lastToken == tRUNECONST ||
+	lastToken == tSTRINGCONST ||
+	lastToken == tRAWSTRINGCONST||
 	lastToken == tFALLTHROUGH ||
 	lastToken == tINC ||
 	lastToken == tDEC ||
@@ -60,7 +62,6 @@ bool insertSemicolon() {
 	lastToken == tSTRING || 
 	lastToken == tBOOL ||
 	lastToken == tRUNE;
-	
 }
 %}
 %x C_COMMENT
@@ -79,7 +80,7 @@ LETTER [A-Za-z_]
 <C_COMMENT><<EOF>> {printf("End of File reached\n"); exit(1);}
 <C_COMMENT>.    { }
  /* single line comment*/
-"//"[^\r\n]*[\r\n<<EOF>>] 
+"//"[^\r\n]*[\r\n<<EOF>>] {if(insertSemicolon()) return saveAndReturn(';');};
  /* keywords */
 break return saveAndReturn(tBREAK);
 case return saveAndReturn(tCASE);
@@ -122,6 +123,7 @@ append return saveAndReturn(tAPPEND);
 "%" return saveAndReturn('%');
 "|" return saveAndReturn('|');
 "^" return saveAndReturn('^');
+"&" return saveAndReturn('&');
 "<<" return saveAndReturn(tSHL);
 ">>" return saveAndReturn(tSHR);
 "&^" return saveAndReturn(tANDNOT);
@@ -162,18 +164,28 @@ append return saveAndReturn(tAPPEND);
 ";" return saveAndReturn(';');
 ":" return saveAndReturn(':');
  /* Literals */
-((0{OCTAL})|(0(x|X){HEX})|(0|[1-9]{DIGIT}*)) return saveAndReturn(tINTCONST);
+((0{OCTAL}+)|(0(x|X){HEX}+)|(0|[1-9]{DIGIT}*)) return saveAndReturn(tINTCONST);
 {DIGIT}*\.{DIGIT}* return saveAndReturn(tFLOATCONST);
 
  /*Raw String*/
 `(\\.|[^`])*` {copyToStr(); return saveAndReturn(tRAWSTRINGCONST);}
  /* Interpreted string */
 \"(\\.|[^\\"])*\" {return saveAndReturn(tSTRINGCONST);}
-\'.\'  return saveAndReturn(tRUNECONST); 
-\n  if(insertSemicolon()) {return saveAndReturn(';');}
+'\\n' return saveAndReturn(tRUNECONST);
+'\\t' return saveAndReturn(tRUNECONST);
+'\\v' return saveAndReturn(tRUNECONST);
+'\\r' return saveAndReturn(tRUNECONST);
+'\\a' return saveAndReturn(tRUNECONST);
+'\\b' return saveAndReturn(tRUNECONST);
+'\\f' return saveAndReturn(tRUNECONST);
+'\\\\' return saveAndReturn(tRUNECONST);
+'\\'' return saveAndReturn(tRUNECONST);
+'.'  return saveAndReturn(tRUNECONST); 
+
+\n  if(insertSemicolon()) { return saveAndReturn(';');}
 [ \t]+ 
 {LETTER}({LETTER}|{DIGIT})* { return saveAndReturn(tIDENTIFIER);}
-. fprintf(stderr,"Unidentified characted %s",yytext); 
+. fprintf(stderr,"Unidentified character %s \n",yytext); 
 %%
 
 int yywrap()

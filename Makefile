@@ -4,10 +4,11 @@ gen : grammar/goLex.l grammar/goParser.y
 	bison -o gen/goParser.cpp grammar/goParser.y --defines 
 compile :  main.o
 	g++  bin/*.o -o bin/goCompiler -I gen/	 -std=c++11
-main.o : goLexer.o  src/main.cpp
+main.o : goLexer.o  src/main.cpp goParser.o
 	g++ -c src/main.cpp -o bin/main.o -I gen/ 
-goLexer.o : gen/goParser.cpp gen/goLexer.cpp 
+goLexer.o : gen/goLexer.cpp 
 	g++ -c gen/goLexer.cpp -o bin/goLexer.o -I gen/
+goParser.o : gen/goParser.cpp
 	g++ -c gen/goParser.cpp -o bin/goParser.o -I gen/ 
 clean: 
 	rm gen/* 

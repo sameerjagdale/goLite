@@ -23,15 +23,27 @@ This file is part of goLite.
 #include<node-visitor.hpp>
 #include<memory>
 #include<vector>
+#include<cstdint>
 namespace GCompiler{
-
+    // Base class of the AST. All nodes should inherit from the node 
+    // directly or indirectly. 
     template<typename T>	
         class AstNode {
             public:
+                enum class NodeType : std::int32_t { 
+                    STMT_TYPE, 
+                    EXPR_TYPE,
+                    DECL_TYPE,
+                    PROG_TYPE
+                };
+            
                 virtual T visitNode( NodeVisitor<T>& visitor) {
 
                     return visitor.caseAstNode();
                 }
+                
+            private:
+                NodeType nodeType;
         };
     template<>
         class AstNode<void> {
@@ -66,5 +78,20 @@ namespace GCompiler{
     template<typename T>
     using ProgramPtr = std::shared_ptr<Program<T>>;
     
+    template<typename T> 
+        class Statement : public AstNode<T> {
+            public :
+                virtual T visitNode(NodeVisitor<T> & visitor) {
+                }
+        };
+    
+    template<>
+        class Statement<void> : public AstNode<void> {
+            public :
+                virtual void visitNode(NodeVisitor<void> &visitor) {
+                }
+        };
+    template<typename T>
+    using StmtPtr = std::shared_ptr<Statement<T>>;
 }
 #endif 

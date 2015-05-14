@@ -122,6 +122,19 @@ namespace GCompiler{
                 virtual void visitNode(NodeVisitor<void> & visitor) {
                 }
         };
-
+    
+    template<typename T> 
+        class VarDecl :  public Decl<T> {
+            public :
+                virtual T visitNode(NodeVisitor<T> & visitor) {
+                }
+        };
+    
+    template<>
+        class VarDecl<void> : public Decl<void> {
+            public : 
+                virtual void visitNode(NodeVisitor<void> & visitor) {
+                }
+        };
 }
 #endif 

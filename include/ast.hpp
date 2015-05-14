@@ -45,6 +45,7 @@ namespace GCompiler{
             private:
                 NodeType nodeType;
         };
+
     template<>
         class AstNode<void> {
             virtual void visitNode(NodeVisitor<void>& visitor) {
@@ -65,7 +66,6 @@ namespace GCompiler{
                     return visitor.caseProgram();
                 }
         };
-
 
     template<> 
         class Program<void> : public AstNode<void> {
@@ -91,7 +91,37 @@ namespace GCompiler{
                 virtual void visitNode(NodeVisitor<void> &visitor) {
                 }
         };
+
     template<typename T>
     using StmtPtr = std::shared_ptr<Statement<T>>;
+    
+    template<typename T> 
+        class TopLevelDecl: public AstNode<T> { 
+            public :
+                virtual T  visitNode(NodeVisitor<T> &visitor) {
+                }
+        };
+    
+    template<> 
+        class TopLevelDecl<void>: public AstNode<void> {
+            public:
+                virtual void visitNode(NodeVisitor<void>& visitor) {
+                }
+        };
+
+    template<typename T>
+        class Decl : public TopLevelDecl<T>, public Statement<T> {
+            public :
+                virtual T visitNode(NodeVisitor<T> & visitor) {
+                }
+        };
+
+    template<>
+        class Decl<void> : public TopLevelDecl<void>, public Statement<void> {
+            public :
+                virtual void visitNode(NodeVisitor<void> & visitor) {
+                }
+        };
+
 }
 #endif 

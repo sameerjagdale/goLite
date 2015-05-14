@@ -4,5 +4,6 @@ template<typename T>
 class NodeVisitor {
 	public:
 	virtual T caseAstNode();
+    virtual T caseProgram();
 };
 #endif

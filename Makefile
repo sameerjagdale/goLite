@@ -2,7 +2,7 @@ all:  compile
 compile :  main.o
 	g++  bin/*.o -o bin/goCompiler -I gen/	 -std=c++11 
 main.o : goLexer.o  src/main.cpp goParser.o
-	g++ -c src/main.cpp -o bin/main.o -I gen/ -I include/ -Wall
+	g++ -c src/main.cpp -o bin/main.o -I gen/ -I include/ -Wall -std=c++11
 goLexer.o : goLexer.cpp 
 	g++ -c gen/goLexer.cpp -o bin/goLexer.o -I gen/ -Wall
 goParser.o : goParser.cpp

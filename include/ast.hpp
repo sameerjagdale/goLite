@@ -65,7 +65,6 @@ namespace GCompiler{
             const std::string packageName;
             TopLevelDeclList list;
     };
-
     using ProgramPtr = std::shared_ptr<Program>;
 
     class Statement : public AstNode {
@@ -73,33 +72,45 @@ namespace GCompiler{
             virtual void visitNode(NodeVisitor & visitor) {
             }
     };
-
     using StmtPtr = std::shared_ptr<Statement>;
-
+    using StmtList = std::vector<StmtPtr>;
 
     class Decl : public TopLevelDecl, public Statement {
         public :
             virtual void visitNode(NodeVisitor& visitor) {
             }
     };
-
     using DeclPtr  = std::shared_ptr<Decl>;
 
     class VarDecl :  public Decl {
         public :
             virtual void visitNode(NodeVisitor& visitor) {
             }
+            
     };
-
     using VarDeclPtr = std::shared_ptr<VarDecl>; 
+
+    class VarSpec : public AstNode {
+        public :
+            virtual void visitNode(NodeVisitor & visitor);     
+    };
+    using VarSpecPtr = std::shared_ptr<VarSpec>;
+    using VarSpecList = std::vector<VarSpecPtr>;
+    
 
     class TypeDecl : public Decl {
         public :
             virtual void visitNode(NodeVisitor & visitor) {
             }
     };
-
     using TypeDeclPtr = std::shared_ptr<TypeDecl>;
+
+    class TypeSpec : public Decl { 
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+    }; 
+    using TypeSpecPtr = std::shared_ptr<TypeSpec>;
+    using TypeSpecList = std::vector<TypeSpecPtr>;
 
     class Function :  public TopLevelDecl {
         public : 
@@ -108,5 +119,12 @@ namespace GCompiler{
 
     };
     using FunctionPtr = std::shared_ptr<Function>;
+
+    class Expr :  public AstNode {
+        public : 
+            virtual void visitNode(NodeVisitor & visitor);
+    };
+    using ExprPtr = std::shared_ptr<Expr>;
+    using ExprList = std::vector<ExprPtr>;
 }
 #endif 

@@ -209,9 +209,23 @@ namespace GCompiler{
     class AssignStmt :  public SimpleStmt {
         public :
             virtual void visitNode(NodeVisitor& visitor);
+            enum class AssignOp {
+                ADD_ASSIGN, 
+                SUB_ASSIGN,  
+                MUL_ASSIGN, 
+                DIV_ASSIGN, 
+                REM_ASSIGN, 
+                AND_ASSIGN, 
+                OR_ASSIGN, 
+                XOR_ASSIGN, 
+                SHL_ASSIGN,
+                SHR_ASSIGN, 
+                AND_NOT_ASSIGN
+            };
         private :
             ExprList lhsList;
             ExprList rhsList;
+            AssignOp op;
     };
     using AssignStmtPtr = std::shared_ptr<AssignStmt>;
 

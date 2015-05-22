@@ -221,17 +221,17 @@ namespace GCompiler{
     };
     using ShortVarDeclPtr  = std::shared_ptr<ShortVarDecl>;
 
-    class IfCond : public AstNode {
+    class Condition : public AstNode {
         public :
             virtual void visitNode(NodeVisitor& visitor);
         private:
             SimpleStmtPtr stmt;
             ExprPtr expr;
     };
-    using IfCondPtr = std::shared_ptr<IfCond>;
+    using ConditionPtr = std::shared_ptr<Condition>;
 
     class IfStmt : public Statement {
-        IfCond cond;
+        Condition cond;
         StmtList ifBlock;
         StmtList elseBlock; 
         public :
@@ -239,5 +239,55 @@ namespace GCompiler{
     };
     using IfStmtPtr = std::shared_ptr<IfStmt>; 
 
+    class BreakStmt : public Statement {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+    };
+    using BreakStmtPtr = std::shared_ptr<BreakStmt>; 
+
+    class ContinueStmt : public Statement {
+        public:
+            virtual void visitNode(NodeVisitor& visitor);
+    };
+    using ContinueStmtPtr = std::shared_ptr<ContinueStmt>;
+
+    class CaseClause : public AstNode  {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            bool isDefault;
+            ExprList exprList;
+            StmtList stmtList; 
+    };
+    using CaseClausePtr = std::shared_ptr<CaseClause>;
+    using CaseClauseList = std::vector<CaseClausePtr>;
+
+    class SwitchStmt : public Statement {
+        private :
+            ConditionPtr switchCond;       
+            CaseClauseList caseList;
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+    };
+    using SwitchStmtPtr = std::shared_ptr<SwitchStmt>;
+   
+    class ForStmtClause : public AstNode {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :   
+            ExprPtr cond;
+            SimpleStmtPtr initStmt; 
+            SimpleStmtPtr execStmt; 
+    };
+    using ForStmtClausePtr = std::shared_ptr<ForStmtClause>;
+
+    class ForStmt : public Statement {
+        private :
+            ForStmtClausePtr forClause;     
+            StmtList forBlock;
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+    };
+    using ForStmtPtr = std::shared_ptr<ForStmt>;
 }
 #endif 

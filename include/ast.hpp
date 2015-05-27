@@ -303,5 +303,152 @@ namespace GCompiler{
             virtual void visitNode(NodeVisitor& visitor);
     };
     using ForStmtPtr = std::shared_ptr<ForStmt>;
+
+    class BinaryExpr : public Expr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            ExprPtr lhsExpr;
+            ExprPtr rhsExpr;
+    };   
+    using BinaryExprPtr = std::shared_ptr<BinaryExpr>;
+    
+    class UnaryExpr : public Expr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+            enum class UnOp {
+                UN_PLUS,
+                UN_MINUS, 
+                UN_BANG, 
+                UN_CAP
+            };
+        private :
+            ExprPtr expr;
+            UnOp op;
+    };
+    using UnaryExprPtr  = std::shared_ptr<UnaryExpr>;
+
+    class PrimaryExpr : public Expr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+    }; 
+    using PrimaryExprPtr = std::shared_ptr<PrimaryExpr>;
+
+    class NameExpr : public PrimaryExpr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            std::string id;
+    };
+    using NameExprPtr = std::shared_ptr<NameExpr>;
+
+    class FunCallExpr : public PrimaryExpr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+           PrimaryExprPtr funcName;
+           ExprList args; 
+    };
+    using FunCallExprPtr = std::shared_ptr<FunCallExpr>;
+
+    class ConversionExpr :  public PrimaryExpr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private:
+            TypePtr type;
+            ExprPtr expr;
+    };
+    using ConversionExprPtr = std::shared_ptr<ConversionExpr>;
+
+    class SelectorExpr : public PrimaryExpr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            PrimaryExprPtr primaryExpr;
+            NameExprPtr nameExpr;
+    };
+    using SelectorExprPtr = std::shared_ptr<SelectorExpr>;
+    
+    class IndexExpr : public PrimaryExpr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            PrimaryExprPtr arrayExpr;
+            ExprPtr index;
+    };
+    
+    class Slice : public AstNode {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            ExprPtr startExpr;
+            ExprPtr stepExpr;
+            ExprPtr stopExpr;
+    };
+    using SlicePtr = std::shared_ptr<Slice>;
+
+    class SliceExpr :  public PrimaryExpr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            PrimaryExpr arrayExpr;
+            SlicePtr slice;
+    };
+    using SliceExprPtr = std::shared_ptr<SliceExpr>;
+
+    class ParenthesizedExpr : public PrimaryExpr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            ExprPtr expr;
+    };
+    using ParenthesizedExprPtr = std::shared_ptr<ParenthesizedExpr>;
+    
+    
+    class LiteralExpr : public PrimaryExpr {
+        public:
+            virtual void visitNode(NodeVisitor& visitor);
+    };
+    using LiteralExprPtr  = std::shared_ptr<LiteralExpr>;
+
+    class FloatLiteralExpr : public LiteralExpr {
+        public:
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            float floatValue;
+    };
+    using FloatLiteralExprPtr = std::shared_ptr<FloatLiteralExpr>;
+    
+    class IntLiteralExpr : public LiteralExpr {
+        public:
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            int intValue;
+    };
+    using IntLiteralExprPtr = std::shared_ptr<FloatLiteralExpr>;
+    
+    class RuneLiteralExpr : public LiteralExpr {
+        public:
+            virtual void visitNode(NodeVisitor& visitor);
+        private:
+            char charValue;
+    };
+    using RuneLiteralExprPtr = std::shared_ptr<FloatLiteralExpr>;
+
+    class StringLiteralExpr : public LiteralExpr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            std::string strValue;
+    };
+    using StringLiteralExprPtr = std::shared_ptr<StringLiteralExpr>;
+    
+    class RawStringLiteralExpr :  public LiteralExpr {
+        public :
+            virtual void visitNode(NodeVisitor& visitor);
+        private :
+            std::string strValue;
+    };
+    using RawStringLiteralExprPtr = std::shared_ptr<RawStringLiteralExpr>;
 }
 #endif 

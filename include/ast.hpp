@@ -35,7 +35,9 @@ namespace GCompiler{
                 DECL_TYPE,
                 PROG_TYPE
             };
-            virtual void visitNode( NodeVisitor& visitor);
+            virtual void visitNode( NodeVisitorPtr& visitor) {
+                
+            }
         private:
             NodeType nodeType;
     };
@@ -45,7 +47,7 @@ namespace GCompiler{
 
     class TopLevelDecl: public AstNode { 
         public :
-            virtual void  visitNode(NodeVisitor& visitor);
+            virtual void  visitNode(NodeVisitorPtr& visitor);
     };
 
     using TopLevelDeclPtr = std::shared_ptr<TopLevelDecl>;
@@ -53,7 +55,7 @@ namespace GCompiler{
 
     class Program : public AstNode {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             const std::string packageName;
             TopLevelDeclList list;
@@ -62,26 +64,26 @@ namespace GCompiler{
 
     class Statement : public AstNode {
         public :
-            virtual void visitNode(NodeVisitor & visitor);
+            virtual void visitNode(NodeVisitorPtr & visitor);
     };
     using StmtPtr = std::shared_ptr<Statement>;
     using StmtList = std::vector<StmtPtr>;
     
     class Decl : public TopLevelDecl, public Statement {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
     };
     using DeclPtr  = std::shared_ptr<Decl>;
 
     class VarDecl :  public Decl {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
     };
     using VarDeclPtr = std::shared_ptr<VarDecl>; 
 
     class VarSpec : public AstNode {
         public :
-            virtual void visitNode(NodeVisitor & visitor);     
+            virtual void visitNode(NodeVisitorPtr & visitor);     
     };
     using VarSpecPtr = std::shared_ptr<VarSpec>;
     using VarSpecList = std::vector<VarSpecPtr>;
@@ -89,21 +91,21 @@ namespace GCompiler{
 
     class TypeDecl : public Decl {
         public :
-            virtual void visitNode(NodeVisitor & visitor);
+            virtual void visitNode(NodeVisitorPtr & visitor);
             
     };
     using TypeDeclPtr = std::shared_ptr<TypeDecl>;
 
     class TypeSpec : public Decl { 
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
     }; 
     using TypeSpecPtr = std::shared_ptr<TypeSpec>;
     using TypeSpecList = std::vector<TypeSpecPtr>;
 
     class Function :  public TopLevelDecl {
         public : 
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private: 
             std::string functionName;
     };
@@ -153,7 +155,7 @@ namespace GCompiler{
 
     class Expr :  public AstNode {
         public : 
-            virtual void visitNode(NodeVisitor & visitor);
+            virtual void visitNode(NodeVisitorPtr & visitor);
     };
     using ExprPtr = std::shared_ptr<Expr>;
     using ExprList = std::vector<ExprPtr>;
@@ -161,7 +163,7 @@ namespace GCompiler{
     class PrintStmt : public Statement {
         ExprList exprList;
         public :
-            virtual void visitNode(NodeVisitor & visitor);
+            virtual void visitNode(NodeVisitorPtr & visitor);
     };
     using PrintStmtPtr = std::shared_ptr<PrintStmt>;
     
@@ -170,7 +172,7 @@ namespace GCompiler{
     using PrintlnStmtPtr  = std::shared_ptr<PrintlnStmt>;
     class RetStmt : public Statement { 
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private:
             ExprPtr expr;
     };
@@ -178,13 +180,13 @@ namespace GCompiler{
 
     class SimpleStmt : public Statement {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
     };
     using SimpleStmtPtr = std::shared_ptr<SimpleStmt>;
     
     class ExprStmt : public Statement {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private:
             ExprPtr expr; 
     };
@@ -192,7 +194,7 @@ namespace GCompiler{
 
     class IncStmt :  public SimpleStmt{
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
            ExprPtr expr;  
     };
@@ -200,7 +202,7 @@ namespace GCompiler{
 
     class DecStmt : public SimpleStmt {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             ExprPtr expr;
     };
@@ -208,7 +210,7 @@ namespace GCompiler{
     
     class AssignStmt :  public SimpleStmt {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
             enum class AssignOp {
                 ADD_ASSIGN, 
                 SUB_ASSIGN,  
@@ -231,13 +233,13 @@ namespace GCompiler{
 
     class ShortVarDecl : public AssignStmt {
         public:
-            virtual void visitNode(NodeVisitor& visitor); 
+            virtual void visitNode(NodeVisitorPtr& visitor); 
     };
     using ShortVarDeclPtr  = std::shared_ptr<ShortVarDecl>;
 
     class Condition : public AstNode {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private:
             SimpleStmtPtr stmt;
             ExprPtr expr;
@@ -249,25 +251,25 @@ namespace GCompiler{
         StmtList ifBlock;
         StmtList elseBlock; 
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
     };
     using IfStmtPtr = std::shared_ptr<IfStmt>; 
 
     class BreakStmt : public Statement {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
     };
     using BreakStmtPtr = std::shared_ptr<BreakStmt>; 
 
     class ContinueStmt : public Statement {
         public:
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
     };
     using ContinueStmtPtr = std::shared_ptr<ContinueStmt>;
 
     class CaseClause : public AstNode  {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             bool isDefault;
             ExprList exprList;
@@ -281,13 +283,13 @@ namespace GCompiler{
             ConditionPtr switchCond;       
             CaseClauseList caseList;
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
     };
     using SwitchStmtPtr = std::shared_ptr<SwitchStmt>;
    
     class ForStmtClause : public AstNode {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :   
             ExprPtr cond;
             SimpleStmtPtr initStmt; 
@@ -300,13 +302,13 @@ namespace GCompiler{
             ForStmtClausePtr forClause;     
             StmtList forBlock;
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
     };
     using ForStmtPtr = std::shared_ptr<ForStmt>;
 
     class BinaryExpr : public Expr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             ExprPtr lhsExpr;
             ExprPtr rhsExpr;
@@ -315,7 +317,7 @@ namespace GCompiler{
     
     class UnaryExpr : public Expr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
             enum class UnOp {
                 UN_PLUS,
                 UN_MINUS, 
@@ -330,13 +332,13 @@ namespace GCompiler{
 
     class PrimaryExpr : public Expr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
     }; 
     using PrimaryExprPtr = std::shared_ptr<PrimaryExpr>;
 
     class NameExpr : public PrimaryExpr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             std::string id;
     };
@@ -344,7 +346,7 @@ namespace GCompiler{
 
     class FunCallExpr : public PrimaryExpr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
            PrimaryExprPtr funcName;
            ExprList args; 
@@ -353,7 +355,7 @@ namespace GCompiler{
 
     class ConversionExpr :  public PrimaryExpr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private:
             TypePtr type;
             ExprPtr expr;
@@ -362,7 +364,7 @@ namespace GCompiler{
 
     class SelectorExpr : public PrimaryExpr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             PrimaryExprPtr primaryExpr;
             NameExprPtr nameExpr;
@@ -371,7 +373,7 @@ namespace GCompiler{
     
     class IndexExpr : public PrimaryExpr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             PrimaryExprPtr arrayExpr;
             ExprPtr index;
@@ -379,7 +381,7 @@ namespace GCompiler{
     
     class Slice : public AstNode {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             ExprPtr startExpr;
             ExprPtr stepExpr;
@@ -389,7 +391,7 @@ namespace GCompiler{
 
     class SliceExpr :  public PrimaryExpr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             PrimaryExpr arrayExpr;
             SlicePtr slice;
@@ -398,7 +400,7 @@ namespace GCompiler{
 
     class ParenthesizedExpr : public PrimaryExpr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             ExprPtr expr;
     };
@@ -407,13 +409,13 @@ namespace GCompiler{
     
     class LiteralExpr : public PrimaryExpr {
         public:
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
     };
     using LiteralExprPtr  = std::shared_ptr<LiteralExpr>;
 
     class FloatLiteralExpr : public LiteralExpr {
         public:
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             float floatValue;
     };
@@ -421,7 +423,7 @@ namespace GCompiler{
     
     class IntLiteralExpr : public LiteralExpr {
         public:
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             int intValue;
     };
@@ -429,7 +431,7 @@ namespace GCompiler{
     
     class RuneLiteralExpr : public LiteralExpr {
         public:
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private:
             char charValue;
     };
@@ -437,7 +439,7 @@ namespace GCompiler{
 
     class StringLiteralExpr : public LiteralExpr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             std::string strValue;
     };
@@ -445,7 +447,7 @@ namespace GCompiler{
     
     class RawStringLiteralExpr :  public LiteralExpr {
         public :
-            virtual void visitNode(NodeVisitor& visitor);
+            virtual void visitNode(NodeVisitorPtr& visitor);
         private :
             std::string strValue;
     };
